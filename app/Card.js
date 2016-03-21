@@ -1,6 +1,36 @@
 import React, {Component, PropTypes} from 'react';
-import CheckList from './CheckList';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import marked from 'marked';
+import CheckList from './CheckList';
+import {DragSource, DropTarget} from 'react-dnd';
+import constants from './constants';
+
+const cardDragSpec = {
+    beginDrag(props){
+        return {
+            id: props.id
+        }
+    }
+}
+
+const cardDropSpec = {
+    hover(props, monitor){
+        const draggedId = monitor.getItem().id;
+        props.cardCallbacks.updatePosition(draggedId, props.id);
+    }
+}
+
+const collectDrag = (connect, minitor)=> {
+    return {
+        connectDragSource: connect.dragSource()
+    }
+}
+
+const collectDrop = (connect, minitor)=> {
+    return {
+        connectDropTarget: connect.dropTarget()
+    }
+}
 
 class Card extends Component {
     constructor() {
@@ -15,12 +45,14 @@ class Card extends Component {
     }
 
     render() {
+        const {connectDragSource, connectDropTarget} = this.props;
         let cardDetails;
         if (this.state.showDetails) {
             cardDetails = (
                 <div className="card__details">
                     <span dangerouslySetInnerHTML={{__html:marked(this.props.description)}}></span>
-                    <CheckList cardId={this.props.id} tasks={this.props.tasks} taskCallbacks={this.props.taskCallbacks}/>
+                    <CheckList cardId={this.props.id} tasks={this.props.tasks}
+                               taskCallbacks={this.props.taskCallbacks}/>
                 </div>
             );
         }
@@ -28,29 +60,35 @@ class Card extends Component {
         let sideColor = {
             position: 'absolute',
             zIndex: -1,
-            top:0,
+            top: 0,
             bottom: 0,
             left: 0,
             width: 8,
             backgroundColor: this.props.color
         }
-        return (
+        return connectDropTarget(connectDragSource(
             <div className="card">
-                <div style={sideColor} />
+                <div style={sideColor}/>
                 <div className="card__title" onClick={this.toggleDetails.bind(this)}>
                     <i className={this.state.showDetails?'fa fa-caret-down':'fa fa-caret-right'}></i>{" "}
                     {this.props.title}
                 </div>
-                {cardDetails}
+                <ReactCSSTransitionGroup
+                    transitionName="toggle"
+                    transitionEnterTimeout={250}
+                    transitionLeaveTimeout={250}
+                >
+                    {cardDetails}
+                </ReactCSSTransitionGroup>
             </div>
-        );
+        ));
     }
 }
 
 let titlePropType = (props, propName, componentName) => {
-    if(props[propName]){
+    if (props[propName]) {
         let value = props[propName];
-        if(typeof  value !== 'string' || value.length > 80){
+        if (typeof  value !== 'string' || value.length > 80) {
             return new Error(
                 `${propName} in ${componentName} is longer than 80 characters`
             )
@@ -64,7 +102,12 @@ Card.propTypes = {
     description: PropTypes.string,
     color: PropTypes.string,
     tasks: PropTypes.arrayOf(PropTypes.object),
-    taskCallbacks: PropTypes.object
+    taskCallbacks: PropTypes.object,
+    cardCallbacks: PropTypes.object,
+    connectDragSource: PropTypes.func.isRequired
 }
 
-export default Card;
+const dragHighOrderCard = DragSource(constants.CARD, cardDragSpec, collectDrag)(Card);
+const dragDropHighOrderCard = DropTarget(constants.CARD, cardDropSpec, collectDrop)(dragHighOrderCard)
+
+export default dragDropHighOrderCard;

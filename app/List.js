@@ -9,7 +9,9 @@ class List extends Component {
                       title={card.title}
                       color={card.color}
                       description={card.description}
-                      tasks={card.tasks}/>
+                      tasks={card.tasks}
+                      taskCallbacks={this.props.taskCallbacks}
+                />
         )
         return (
             <div className="list">
@@ -22,7 +24,8 @@ class List extends Component {
 
 List.propTypes = {
     title: PropTypes.string.isRequired,
-    cards: PropTypes.arrayOf(PropTypes.object)
+    cards: PropTypes.arrayOf(PropTypes.object),
+    taskCallbacks: PropTypes.object
 }
 
 export default List;

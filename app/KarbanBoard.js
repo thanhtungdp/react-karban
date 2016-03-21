@@ -5,15 +5,15 @@ class KarbanBoard extends Component {
     render() {
         return (
             <div className="app">
-                <List id="todo" title="To do" cards={
+                <List id="todo" title="To do" taskCallbacks={this.props.taskCallbacks} cards={
                     this.props.cards.filter((card)=> card.status === "todo")
                 }/>
 
-                <List id="in-progress" title="In Progress" cards={
+                <List id="in-progress" title="In Progress" taskCallbacks={this.props.taskCallbacks} cards={
                     this.props.cards.filter((card)=> card.status === "in-progress")
                 }/>
 
-                <List id="done" title="Done" cards={
+                <List id="done" title="Done" taskCallbacks={this.props.taskCallbacks} cards={
                     this.props.cards.filter((card)=> card.status === "done")
                 }/>
             </div>
@@ -22,7 +22,8 @@ class KarbanBoard extends Component {
 }
 
 KarbanBoard.propTypes = {
-    cards: PropTypes.arrayOf(PropTypes.object)
+    cards: PropTypes.arrayOf(PropTypes.object),
+    taskCallbacks: PropTypes.object
 }
 
 export default KarbanBoard;

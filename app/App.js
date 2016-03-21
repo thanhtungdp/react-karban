@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
-import KarbanBoard from './KarbanBoard';
+import KarbanBoardContainer from './KarbanBoardContainer';
 import {render} from 'react-dom';
+import 'react-addons-update'
 
 let cardList = [
     {
@@ -43,4 +44,4 @@ let cardList = [
     }
 ]
 
-render(<KarbanBoard cards={cardList}/>, document.getElementById('root'))
+render(<KarbanBoardContainer />, document.getElementById('root'))

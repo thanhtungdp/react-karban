@@ -3,6 +3,7 @@ import KarbanBoard from './KarbanBoard';
 import 'whatwg-fetch';
 import 'babel-polyfill';
 import update from 'react-addons-update';
+import {throttle} from './utils';
 
 const API_URL = 'http://kanbanapi.pro-react.com';
 const API_HEADERS = {
@@ -16,6 +17,11 @@ class KarbanBoardContainer extends Component {
         this.state = {
             cards: []
         }
+
+        //Only call updateCardStatus when argyments change
+        this.updateCardStatus = throttle(this.updateCardStatus.bind(this));
+        this.updateCardPosition = throttle(this.updateCardPosition.bind(this), 500);
+
     }
 
     addTask(cardId, taskName) {
@@ -141,6 +147,34 @@ class KarbanBoardContainer extends Component {
         }
     }
 
+    persistCardDrag(cardId, status) {
+        let cardIndex = this.state.cards.findIndex((card)=>card.id == cardId);
+        let card = this.state.cards[cardIndex];
+        fetch(`${API_URL}/cards/${cardId}`, {
+            method: 'put',
+            headers: API_HEADERS,
+            body: JSON.stringify({status: card.status, raw_order_position: cardIndex})
+        })
+            .then((response)=> {
+                if (!response.ok) {
+                    throw new Error("Server response wasn't OK");
+                }
+            })
+            .catch((error)=> {
+                console.error('Fetch error: ', error);
+                //Rollba
+                this.setState(
+                    update(this.state, {
+                        cards: {
+                            [cardIndex]: {
+                                status: {$set: status}
+                            }
+                        }
+                    })
+                )
+            })
+    }
+
     componentDidMount() {
         fetch(API_URL + '/cards', {headers: API_HEADERS})
             .then((response)=>response.json())
@@ -151,7 +185,6 @@ class KarbanBoardContainer extends Component {
                 console.log('Error fetching and paring data', error);
             })
     }
-
     render() {
         return (
             <KarbanBoard cards={this.state.cards}
@@ -162,7 +195,8 @@ class KarbanBoardContainer extends Component {
                          }}
                          cardCallbacks={{
                             updateStatus: this.updateCardStatus.bind(this),
-                            updatePosition: this.updateCardPosition.bind(this)
+                            updatePosition: this.updateCardPosition.bind(this),
+                            persistCardDrag: this.persistCardDrag.bind(this)
                          }}
             />
         )

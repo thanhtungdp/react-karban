@@ -22,4 +22,11 @@ class Routes extends Component {
     }
 }
 
+class Test extends Component {
+    render(){
+
+    }
+}
+
+
 render(<Routes />, document.getElementById('root'))

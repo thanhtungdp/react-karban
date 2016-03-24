@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import List from './List';
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import {Link} from 'react-router';
 
 class KarbanBoard extends Component {
     render() {
@@ -10,8 +11,13 @@ class KarbanBoard extends Component {
             {name: "in-progress", title: "In progress"},
             {name: "done", title: "Done"},
         ];
+        let cardModal = this.props.children && React.cloneElement(this.props.children, {
+                cardCallbacks: this.props.cardCallbacks,
+                cards: this.props.cards
+            });
         return (
             <div className="app">
+                <Link to="/new" className="float-button">+</Link>
                 {
                     lists.map((list, listIndex)=>
                         <List id={list.name} key={listIndex} title={list.title} taskCallbacks={this.props.taskCallbacks}
@@ -20,6 +26,7 @@ class KarbanBoard extends Component {
                            }/>
                     )
                 }
+                {cardModal}
             </div>
         )
     }

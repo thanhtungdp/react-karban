@@ -24,6 +24,63 @@ class KarbanBoardContainer extends Component {
 
     }
 
+    addCard(card) {
+        let prevState = this.state;
+        if (card.id === null) {
+            let card = Object.assign({}, card, {id: Date.now()});
+        }
+        let nextState = update(this.state.cards, {$push: [card]});
+
+        this.setState({cards: nextState});
+
+        fetch(`${API_URL}/cards`, {
+            method: 'post',
+            headers: API_HEADERS,
+            body: JSON.stringify(card)
+        })
+            .then((response)=> {
+                if (response.ok) {
+                    return response.json();
+                }
+                else {
+                    throw new Error('Server wasn\'t ok');
+                }
+            })
+            .then((reponseData)=> {
+                card.id = reponseData.id;
+                this.setState({cards: nextState});
+            })
+            .catch((error)=> {
+                this.setState(prevState);
+            });
+    }
+
+    updateCard(card) {
+        let prevState = this.state;
+        let cardIndex = this.state.cards.findIndex((c)=>c.id == card.id);
+        console.log(card);
+        let nextState = update(this.state.cards, {
+            [cardIndex]: {$set: card}
+        });
+        this.setState({cards: nextState});
+        console.log(this.state.cards[cardIndex]);
+        fetch(`${API_URL}/cards/${card.id}`, {
+            method: 'put',
+            headers: API_HEADERS,
+            body: JSON.stringify(card)
+        })
+            .then((response)=> {
+                if (response.ok) {
+                    return response.json();
+                }
+                else throw new Error('Server wasn\'t OK');
+            })
+            .catch((error)=> {
+                console.log('Fetch Error');
+                this.setState(prevState);
+            })
+    }
+
     addTask(cardId, taskName) {
         let prevState = this.state;
         let cardIndex = this.state.cards.findIndex((card)=>card.id == cardId);
@@ -185,21 +242,24 @@ class KarbanBoardContainer extends Component {
                 console.log('Error fetching and paring data', error);
             })
     }
+
     render() {
-        return (
-            <KarbanBoard cards={this.state.cards}
-                         taskCallbacks={{
-                            toggle: this.toggleTask.bind(this),
-                            add: this.addTask.bind(this),
-                            delete: this.deleteTask.bind(this)
-                         }}
-                         cardCallbacks={{
-                            updateStatus: this.updateCardStatus.bind(this),
-                            updatePosition: this.updateCardPosition.bind(this),
-                            persistCardDrag: this.persistCardDrag.bind(this)
-                         }}
-            />
-        )
+        let karban_board = this.props.children && React.cloneElement(this.props.children, {
+                cards: this.state.cards,
+                taskCallbacks: {
+                    toggle: this.toggleTask.bind(this),
+                    add: this.addTask.bind(this),
+                    delete: this.deleteTask.bind(this)
+                },
+                cardCallbacks: {
+                    addCard: this.addCard.bind(this),
+                    updateCard: this.updateCard.bind(this),
+                    updateStatus: this.updateCardStatus.bind(this),
+                    updatePosition: this.updateCardPosition.bind(this),
+                    persistCardDrag: this.persistCardDrag.bind(this)
+                }
+            });
+        return (karban_board);
     }
 }
 

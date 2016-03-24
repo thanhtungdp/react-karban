@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import {Link} from 'react-router';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import marked from 'marked';
 import CheckList from './CheckList';
@@ -73,6 +74,7 @@ class Card extends Component {
         return connectDropTarget(connectDragSource(
             <div className="card">
                 <div style={sideColor}/>
+                <div className="card__edit"><Link to={'/edit/'+this.props.id}>&#9998;</Link></div>
                 <div className="card__title" onClick={this.toggleDetails.bind(this)}>
                     <i className={this.state.showDetails?'fa fa-caret-down':'fa fa-caret-right'}></i>{" "}
                     {this.props.title}

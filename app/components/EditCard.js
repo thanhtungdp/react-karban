@@ -1,10 +1,12 @@
 import React, {Component, PropTypes} from 'react';
 import CardForm from './CardForm';
+import CardStore from '../stores/CardStore';
+import CardActionCreators from '../actions/CardActionCreators';
 
 class EditCard extends Component {
     componentWillMount() {
-        let card = this.props.cards.find((c)=>c.id == this.props.params.card_id);
-        this.setState({...card})
+        let card = CardStore.getCard(parseInt(this.props.params.card_id));
+        this.setState(Object.assign({},card));
     }
 
     handleChange(field, value) {
@@ -15,6 +17,10 @@ class EditCard extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
+        CardActionCreators.updateCard(
+            CardStore.getCard(parseInt(this.props.params.card_id)),
+            this.state
+        )
         this.props.cardCallbacks.updateCard(this.state);
         this.props.history.pushState(null, '/');
     }
@@ -36,8 +42,7 @@ class EditCard extends Component {
 }
 
 EditCard.propTypes = {
-    cardCallbacks: PropTypes.object,
-    cards: PropTypes.arrayOf(PropTypes.object)
+
 }
 
 export default EditCard;

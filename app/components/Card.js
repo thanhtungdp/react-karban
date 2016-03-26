@@ -5,6 +5,7 @@ import marked from 'marked';
 import CheckList from './CheckList';
 import {DragSource, DropTarget} from 'react-dnd';
 import constants from '../constants';
+import CardActionCreators from '../actions/CardActionCreators';
 
 const cardDragSpec = {
     beginDrag(props){
@@ -14,14 +15,16 @@ const cardDragSpec = {
         }
     },
     endDrag(props){
-        props.cardCallbacks.persistCardDrag(props.id, props.status);
+        CardActionCreators.persistCardDrag(props);
     }
 }
 
 const cardDropSpec = {
     hover(props, monitor){
         const draggedId = monitor.getItem().id;
-        props.cardCallbacks.updatePosition(draggedId, props.id);
+        if (props.id !== draggedId) {
+            CardActionCreators.updateCard(draggedId, props.id);
+        }
     }
 }
 
@@ -46,18 +49,17 @@ class Card extends Component {
     }
 
     toggleDetails() {
-        this.setState({showDetails: !this.state.showDetails});
+        CardActionCreators.toggleCardDetails(this.props.id);
     }
 
     render() {
         const {connectDragSource, connectDropTarget} = this.props;
         let cardDetails;
-        if (this.state.showDetails) {
+        if (this.props.showDetails) {
             cardDetails = (
                 <div className="card__details">
                     <span dangerouslySetInnerHTML={{__html:marked(this.props.description)}}></span>
-                    <CheckList cardId={this.props.id} tasks={this.props.tasks}
-                               taskCallbacks={this.props.taskCallbacks}/>
+                    <CheckList cardId={this.props.id} tasks={this.props.tasks} />
                 </div>
             );
         }
@@ -76,7 +78,7 @@ class Card extends Component {
                 <div style={sideColor}/>
                 <div className="card__edit"><Link to={'/edit/'+this.props.id}>&#9998;</Link></div>
                 <div className="card__title" onClick={this.toggleDetails.bind(this)}>
-                    <i className={this.state.showDetails?'fa fa-caret-down':'fa fa-caret-right'}></i>{" "}
+                    <i className={this.props.showDetails?'fa fa-caret-down':'fa fa-caret-right'}></i>{" "}
                     {this.props.title}
                 </div>
                 <ReactCSSTransitionGroup
@@ -108,9 +110,8 @@ Card.propTypes = {
     description: PropTypes.string,
     color: PropTypes.string,
     tasks: PropTypes.arrayOf(PropTypes.object),
-    taskCallbacks: PropTypes.object,
-    cardCallbacks: PropTypes.object,
-    connectDragSource: PropTypes.func.isRequired
+    connectDragSource: PropTypes.func.isRequired,
+    connectDropTarget: PropTypes.func.isRequired
 }
 
 const dragHighOrderCard = DragSource(constants.CARD, cardDragSpec, collectDrag)(Card);

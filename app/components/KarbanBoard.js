@@ -12,16 +12,15 @@ class KarbanBoard extends Component {
             {name: "done", title: "Done"},
         ];
         let cardModal = this.props.children && React.cloneElement(this.props.children, {
-                cardCallbacks: this.props.cardCallbacks,
                 cards: this.props.cards
             });
+        console.log(this.props.cards);
         return (
             <div className="app">
                 <Link to="/new" className="float-button">+</Link>
                 {
                     lists.map((list, listIndex)=>
-                        <List id={list.name} key={listIndex} title={list.title} taskCallbacks={this.props.taskCallbacks}
-                              cardCallbacks={this.props.cardCallbacks}
+                        <List id={list.name} key={listIndex} title={list.title}
                               cards={this.props.cards.filter((card)=> card.status === list.name)
                            }/>
                     )
@@ -33,9 +32,7 @@ class KarbanBoard extends Component {
 }
 
 KarbanBoard.propTypes = {
-    cardCallbacks: PropTypes.object,
-    cards: PropTypes.arrayOf(PropTypes.object),
-    taskCallbacks: PropTypes.object
+    cards: PropTypes.arrayOf(PropTypes.object)
 }
 
 

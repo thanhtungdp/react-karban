@@ -2,11 +2,12 @@ import React, {Component, PropTypes} from 'react';
 import Card from './Card';
 import {DropTarget} from 'react-dnd';
 import constants from '../constants';
+import CardActionCreators from '../actions/CardActionCreators'
 
 const listTargetSpec = {
     hover(props, monitor){
         const draggedId = monitor.getItem().id;
-        props.cardCallbacks.updateStatus(draggedId, props.id);
+        CardActionCreators.updateCardStatus(draggedId, props.id);
     }
 }
 
@@ -20,15 +21,7 @@ class List extends Component {
     render() {
         const {connectDropTarget} = this.props;
         var cards = this.props.cards.map((card)=>
-            <Card id={card.id}
-                  key={card.id}
-                  title={card.title}
-                  color={card.color}
-                  description={card.description}
-                  tasks={card.tasks}
-                  taskCallbacks={this.props.taskCallbacks}
-                  cardCallbacks={this.props.cardCallbacks}
-            />
+            <Card key={card.id} {...card}  />
         )
         return connectDropTarget(
             <div className="list">
@@ -43,8 +36,7 @@ List.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     cards: PropTypes.arrayOf(PropTypes.object),
-    taskCallbacks: PropTypes.object,
-    cardCallbacks: PropTypes.object,
+    connectDropTarget: PropTypes.func.isRequired
 }
 
-export default DropTarget(constants.CARD,listTargetSpec, collect)(List);
+export default DropTarget(constants.CARD, listTargetSpec, collect)(List);

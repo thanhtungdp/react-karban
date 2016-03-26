@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import Card from './Card';
 import {DropTarget} from 'react-dnd';
-import constants from './constants';
+import constants from '../constants';
 
 const listTargetSpec = {
     hover(props, monitor){

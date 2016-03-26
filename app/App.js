@@ -2,10 +2,10 @@ import React,{Component} from 'react';
 import {render} from 'react-dom';
 import 'react-addons-update'
 import {Router, Route, hashHistory} from 'react-router';
-import KarbanBoardContainer from './KarbanBoardContainer';
-import KarbanBoard from './KarbanBoard';
-import NewCard from './NewCard';
-import EditCard from './EditCard';
+import KarbanBoardContainer from './components/KarbanBoardContainer';
+import KarbanBoard from './components/KarbanBoard';
+import NewCard from './components/NewCard';
+import EditCard from './components/EditCard';
 
 class Routes extends Component {
     render() {
@@ -21,12 +21,5 @@ class Routes extends Component {
         )
     }
 }
-
-class Test extends Component {
-    render(){
-
-    }
-}
-
 
 render(<Routes />, document.getElementById('root'))

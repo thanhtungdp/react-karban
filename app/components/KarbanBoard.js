@@ -14,7 +14,6 @@ class KarbanBoard extends Component {
         let cardModal = this.props.children && React.cloneElement(this.props.children, {
                 cards: this.props.cards
             });
-        console.log(this.props.cards);
         return (
             <div className="app">
                 <Link to="/new" className="float-button">+</Link>

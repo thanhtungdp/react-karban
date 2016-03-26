@@ -18,6 +18,9 @@ export default {
 
     UPDATE_CARD_POSITION: 'update card position',
 
+    CREATE_DRAFT: 'create draft',
+    UPDATE_DRAFT: 'update draft',
+
     PERSIST_CARD_DRAG: 'persist card drag',
     PERSIST_CARD_DRAG_SUCCESS: 'persist card success',
     PERSIST_CARD_DRAG_ERROR: 'persist card drag error',

@@ -55,8 +55,9 @@ let KarbanApi = {
     toggleTask(cardId, task){
         return fetch(`${API_URL}/cards/${cardId}/tasks/${task.id}`, {
             method: 'put',
-            headers: JSON.stringify({done: !task.done}),
-        });
+            headers: API_HEADERS,
+            body: JSON.stringify({done: !task.done})
+        })
     }
 }
 

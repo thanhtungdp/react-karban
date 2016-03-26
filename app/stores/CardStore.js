@@ -50,8 +50,6 @@ class CardStore extends ReduceStore {
 
             case constants.TOGGLE_CARD_DETAILS:
                 var cardIndex = this.getCardIndex(action.payload.cardId);
-                console.log('toggle from store ' + cardIndex);
-
                 return update(this.getState(), {
                     [cardIndex]: {
                         showDetails: {$apply: (currentValue)=> (currentValue == true) ? false : true}
@@ -66,13 +64,14 @@ class CardStore extends ReduceStore {
                     var cardIndex = this.getCardIndex(action.payload.cardId);
                     let card = this.getState()[cardIndex];
                     let afterIndex = this.getCardIndex(action.payload.afterId);
-                    return update(this.state, {
+                    return update(this.getState(), {
                         $splice: [
                             [cardIndex, 1],
                             [afterIndex, 0, card]
                         ]
                     });
                 }
+                else return this.getState();
                 break;
             case constants.UPDATE_CARD_STATUS:
                 var cardIndex = this.getCardIndex(action.payload.cardId);

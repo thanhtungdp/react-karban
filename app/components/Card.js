@@ -22,9 +22,7 @@ const cardDragSpec = {
 const cardDropSpec = {
     hover(props, monitor){
         const draggedId = monitor.getItem().id;
-        if (props.id !== draggedId) {
-            CardActionCreators.updateCard(draggedId, props.id);
-        }
+        CardActionCreators.updateCardPosition(draggedId, props.id);
     }
 }
 
@@ -59,7 +57,7 @@ class Card extends Component {
             cardDetails = (
                 <div className="card__details">
                     <span dangerouslySetInnerHTML={{__html:marked(this.props.description)}}></span>
-                    <CheckList cardId={this.props.id} tasks={this.props.tasks} />
+                    <CheckList cardId={this.props.id} tasks={this.props.tasks}/>
                 </div>
             );
         }

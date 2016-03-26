@@ -51,11 +51,25 @@ let CardActionCreators = {
     persistCardDrag(cardProps){
         let card = CardStore.getCard(cardProps.id);
         let cardIndex = CardStore.getCardIndex(cardProps.id);
-        AppDispatcher.dispatchAsync(KarbanApi.updateCard(card.id, card.status, cardIndex), {
+        AppDispatcher.dispatchAsync(KarbanApi.persistCardDrag(card.id, card.status, cardIndex), {
             request: constants.PERSIST_CARD_DRAG,
             success: constants.PERSIST_CARD_DRAG_SUCCESS,
             error: constants.PERSIST_CARD_DRAG_ERROR,
         }, {cardProps});
+    },
+
+    createDraft(card){
+        AppDispatcher.dispatch({
+            type: constants.CREATE_DRAFT,
+            payload: {card}
+        })
+    },
+
+    updateDraft(field, value){
+        AppDispatcher.dispatch({
+            type: constants.UPDATE_DRAFT,
+            payload: {field, value}
+        })
     }
 
 

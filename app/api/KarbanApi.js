@@ -47,7 +47,7 @@ let KarbanApi = {
 
     deleteTask(cardId, task){
         return fetch(`${API_URL}/cards/${cardId}/tasks/${task.id}`, {
-            method: 'put',
+            method: 'delete',
             headers: API_HEADERS,
         });
     },
